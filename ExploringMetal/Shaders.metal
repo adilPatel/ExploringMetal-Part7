@@ -30,18 +30,18 @@ typedef struct {
 // The output of the vertex shader, which will be fed into the fragment shader
 typedef struct {
     float4 position [[position]];
-    float4 normal;
+    float3 normal;
     float4 worldSpaceCoordinate;
     float2 texCoord;
 } RasteriserData;
 
 // Light and material data
 constant float3 lightPos = float3(4.0f, 4.0f, 0.0f);
-constant half4 lightColour = half4(1.0f, 1.0f, 1.0f, 1.0f);
-constant float lightPower = 50.0f;
+constant half4 lightColour = half4(1.0, 1.0, 1.0, 1.0);
+constant half lightPower = 50.0;
 
-constant half4 ambientColour =  half4(0.1f, 0.0f, 0.0f, 1.0f);
-constant half4 specularColour = half4(1.0f, 1.0f, 1.0f, 1.0f);
+constant half4 ambientColour =  half4(0.1, 0.0, 0.0, 1.0);
+constant half4 specularColour = half4(1.0, 1.0, 1.0, 1.0);
 constant float shininess = 50.0f;
 
 vertex RasteriserData helloVertexShader(uint vertexID [[vertex_id]],
@@ -56,7 +56,7 @@ vertex RasteriserData helloVertexShader(uint vertexID [[vertex_id]],
     RasteriserData out;
     
     out.position = uniforms.projectionMatrix * transformedPos;
-    out.normal = float4(uniforms.normalMatrix * normal, 0.0f);
+    out.normal = uniforms.normalMatrix * normal;
     out.worldSpaceCoordinate = transformedPos;
     out.texCoord = vertices[vertexID].texCoord;
     
@@ -70,7 +70,7 @@ fragment half4 helloFragmentShader(RasteriserData in [[stage_in]],
     // To start with, we need the light vector
     float3 pos = float3(in.worldSpaceCoordinate);
     float3 lightVec = lightPos - pos;
-    float lightLength = length(lightVec);
+    half lightLength = length(lightVec);
     lightVec = normalize(lightVec);
     lightLength = lightLength * lightLength;
     
@@ -85,7 +85,7 @@ fragment half4 helloFragmentShader(RasteriserData in [[stage_in]],
     float3 viewVec = normalize(-pos);
     float3 halfVec = normalize(lightVec + viewVec);
     
-    float specCosine = max(dot(halfVec, normal), 0.0f);
+    float specCosine = saturate(dot(halfVec, normal));
     half4 specular = pow(specCosine, shininess) * specularColour;
     
     half4 brightness = lightPower / lightLength * lightColour;

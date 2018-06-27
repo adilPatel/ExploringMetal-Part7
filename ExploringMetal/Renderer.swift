@@ -154,6 +154,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         // So now we need a command buffer...
         let commandBuffer = commandQueue.makeCommandBuffer()
+        commandBuffer?.label = "Application Command Buffer"
         
         // We'll encode render commands into the command buffer using a render command encoder. However, like the
         // render pipeline state, we'll use a descriptor. This is known as the render pass descriptor
@@ -165,25 +166,38 @@ class Renderer: NSObject, MTKViewDelegate {
             // When loading the colour buffer, we clear it to the above-mentioned colour, which is black
             renderPassDescriptor.colorAttachments[0].loadAction = .clear
             let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
-            
+            renderEncoder?.label = "Application Render Encoder"
             
             // Copy the data into a buffer and set the render pipeline state
+            renderEncoder?.pushDebugGroup("Encoding vertex arguments")
             renderEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
             renderEncoder?.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
+            renderEncoder?.popDebugGroup()
+            
+            renderEncoder?.pushDebugGroup("Assigning render and depth states")
             renderEncoder?.setRenderPipelineState(pipelineState)
             renderEncoder?.setDepthStencilState(depthState)
+            renderEncoder?.popDebugGroup()
+            
+            renderEncoder?.pushDebugGroup("Assigning fragment arguments")
             renderEncoder?.setFragmentTexture(sphereTexture, index: 0)
             renderEncoder?.setFragmentSamplerState(samplerState, index: 0)
+            renderEncoder?.popDebugGroup()
+            
+            renderEncoder?.setFrontFacing(.counterClockwise)
+            renderEncoder?.setCullMode(.back)
             
             let primitiveType = self.subMesh.primitiveType
             let indexCount = self.subMesh.indexCount
             let indexType  = self.subMesh.indexType
             
+            renderEncoder?.pushDebugGroup("Draw call")
             renderEncoder?.drawIndexedPrimitives(type: primitiveType,
                                                  indexCount: indexCount,
                                                  indexType: indexType,
                                                  indexBuffer: self.indexBuffer,
                                                  indexBufferOffset: 0)
+            renderEncoder?.popDebugGroup()
             
             renderEncoder?.endEncoding()
             
@@ -217,6 +231,7 @@ func createSampler(device: MTLDevice) -> MTLSamplerState? {
     samplerDescriptor.tAddressMode = .repeat
     samplerDescriptor.minFilter = .nearest
     samplerDescriptor.magFilter = .linear
+    samplerDescriptor.mipFilter = .linear
     
     // We could've used a bilinear filter for minification, but it fails when the pixel
     // covers more than 4 texels. This is because bilinear filters blend four texels
@@ -231,7 +246,12 @@ func createTexture(device: MTLDevice, assetName: String, assetExtension: String)
     let textureLoader = MTKTextureLoader(device: device)
     let tempPath = Bundle.main.path(forResource: assetName, ofType: assetExtension)
     
-    let textureOptions = [MTKTextureLoader.Option.origin : MTKTextureLoader.Origin.topLeft]
+    let storageMode = NSNumber(value: MTLStorageMode.`private`.rawValue)
+    let textureUsage = NSNumber(value: MTLTextureUsage.shaderRead.rawValue)
+    let mipMapCreation = NSNumber(value: true)
+    let textureOptions = [MTKTextureLoader.Option.textureStorageMode : storageMode,
+                          MTKTextureLoader.Option.textureUsage : textureUsage,
+                          MTKTextureLoader.Option.generateMipmaps : mipMapCreation]
     if let path = tempPath {
         let url = URL(fileURLWithPath: path)
         return try textureLoader.newTexture(URL: url, options: textureOptions)

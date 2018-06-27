@@ -435,6 +435,7 @@
 				DEVELOPMENT_TEAM = SY5FFSAMLT;
 				INFOPLIST_FILE = ExploringMetal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
@@ -452,6 +453,7 @@
 				DEVELOPMENT_TEAM = SY5FFSAMLT;
 				INFOPLIST_FILE = ExploringMetal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
