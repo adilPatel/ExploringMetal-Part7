@@ -60,9 +60,15 @@ class Renderer: NSObject, MTKViewDelegate {
     // The texture sampler which will be passed on to Metal
     var samplerState: MTLSamplerState?
     
+    
     init?(metalKitView: MTKView) {
         
         self.device = metalKitView.device!
+        
+        guard let queue = self.device.makeCommandQueue() else {
+            return nil
+        }
+        self.commandQueue = queue
         
         metalKitView.depthStencilPixelFormat = .depth32Float_stencil8
         
@@ -90,14 +96,23 @@ class Renderer: NSObject, MTKViewDelegate {
         
         // Create the box in a more elegant and procedural manner
         let mesh: MTKMesh
+        let componentsPerRow = 3 + 3 + 2
+        let stride = MemoryLayout<Float>.size * componentsPerRow
+        let endPoint = 2601
         
         do {
             mesh = try makeMesh(device: self.device, vertexDescriptor: vertexDescriptor)
-            self.vertexBuffer = mesh.vertexBuffers[0].buffer
+            let mdlVertexBuffer = mesh.vertexBuffers[0].buffer
+            self.vertexBuffer = device.makeBuffer(bytes: mdlVertexBuffer.contents(),
+                                                  length: stride * endPoint,
+                                                  options: .cpuCacheModeWriteCombined)
+            self.vertexBuffer.label = "Sphere Vertex Buffer"
             self.subMesh = mesh.submeshes[0]
             self.indexBuffer = subMesh.indexBuffer.buffer
+            self.indexBuffer.label = "Sphere Index Buffer"
         } catch {
             print("ERROR: Unable to create mesh.  Error info: \(error)")
+            return nil
         }
         
 
@@ -116,6 +131,7 @@ class Renderer: NSObject, MTKViewDelegate {
         pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
+        pipelineDescriptor.label = "Main Render Pipeline State"
         
         do {
             try self.pipelineState = device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -128,21 +144,21 @@ class Renderer: NSObject, MTKViewDelegate {
         let depthStateDesciptor = MTLDepthStencilDescriptor()
         depthStateDesciptor.depthCompareFunction = .less
         depthStateDesciptor.isDepthWriteEnabled = true
+        depthStateDesciptor.label = "Main Depth State"
         guard let state = device.makeDepthStencilState(descriptor:depthStateDesciptor) else { return nil }
         self.depthState = state
         
         do {
-            self.sphereTexture = try createTexture(device: device, assetName: "Atlas", assetExtension: "jpg")
+            self.sphereTexture = try createTexture(device: device, assetName: "Atlas", assetExtension: "jpeg")
+            self.sphereTexture.label = "Atlas Texture"
+            
         } catch {
             print("ERROR: Failed to load texture with error:\n\(error)")
         }
         
        self.samplerState = createSampler(device: device)
         
-        // And of course... a command queue
-        self.commandQueue = self.device.makeCommandQueue()!
-        
-        super.init()
+       super.init()
 
         
     }
@@ -178,19 +194,19 @@ class Renderer: NSObject, MTKViewDelegate {
             renderEncoder?.setRenderPipelineState(pipelineState)
             renderEncoder?.setDepthStencilState(depthState)
             renderEncoder?.popDebugGroup()
-            
+
             renderEncoder?.pushDebugGroup("Assigning fragment arguments")
             renderEncoder?.setFragmentTexture(sphereTexture, index: 0)
             renderEncoder?.setFragmentSamplerState(samplerState, index: 0)
             renderEncoder?.popDebugGroup()
-            
+
             renderEncoder?.setFrontFacing(.counterClockwise)
             renderEncoder?.setCullMode(.back)
-            
+
             let primitiveType = self.subMesh.primitiveType
             let indexCount = self.subMesh.indexCount
             let indexType  = self.subMesh.indexType
-            
+
             renderEncoder?.pushDebugGroup("Draw call")
             renderEncoder?.drawIndexedPrimitives(type: primitiveType,
                                                  indexCount: indexCount,
@@ -229,9 +245,10 @@ func createSampler(device: MTLDevice) -> MTLSamplerState? {
     let samplerDescriptor = MTLSamplerDescriptor()
     samplerDescriptor.sAddressMode = .repeat
     samplerDescriptor.tAddressMode = .repeat
-    samplerDescriptor.minFilter = .nearest
+    samplerDescriptor.minFilter = .linear
     samplerDescriptor.magFilter = .linear
     samplerDescriptor.mipFilter = .linear
+    samplerDescriptor.label = "Atlas Texture Sampler"
     
     // We could've used a bilinear filter for minification, but it fails when the pixel
     // covers more than 4 texels. This is because bilinear filters blend four texels

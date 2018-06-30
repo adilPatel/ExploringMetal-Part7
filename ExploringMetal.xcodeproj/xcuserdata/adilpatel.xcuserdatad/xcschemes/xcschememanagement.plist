@@ -9,6 +9,44 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>ExploringMetal_iOS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>DA5EA43B20C007A500CA418D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA5EA45220C007A600CA418D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA5EA45D20C007A600CA418D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA74343020E3AC8000F16125</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA74344820E3AC8200F16125</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DA74345320E3AC8200F16125</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 	</dict>
 </dict>
 </plist>
