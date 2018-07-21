@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA117E7C20EC2005008F0476 /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA117E7B20EC2005008F0476 /* Maths.swift */; };
+		DA117E7D20EC2005008F0476 /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA117E7B20EC2005008F0476 /* Maths.swift */; };
 		DA3603BD20E4399B0056348C /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603BC20E4399B0056348C /* cat.jpeg */; };
 		DA3603BE20E4399B0056348C /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603BC20E4399B0056348C /* cat.jpeg */; };
 		DA3603C620E43AFF0056348C /* Atlas.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603C520E43AFF0056348C /* Atlas.jpeg */; };
@@ -28,6 +30,12 @@
 		DA74346420E3AD4000F16125 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44320C007A500CA418D /* Renderer.swift */; };
 		DA74346520E3AD4800F16125 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44520C007A500CA418D /* Shaders.metal */; };
 		DA74346720E3AEB500F16125 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA5EA44820C007A500CA418D /* Assets.xcassets */; };
+		DA997D7A20EE7E4A00224808 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7920EE7E4A00224808 /* Protocols.swift */; };
+		DA997D7B20EE7E4A00224808 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7920EE7E4A00224808 /* Protocols.swift */; };
+		DA997D7D20EEA71200224808 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7C20EEA71200224808 /* Camera.swift */; };
+		DA997D7E20EEA71200224808 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7C20EEA71200224808 /* Camera.swift */; };
+		DA997D8620F025F900224808 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D8520F025F900224808 /* KeyCodes.swift */; };
+		DA997D8720F025F900224808 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D8520F025F900224808 /* KeyCodes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +70,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA117E7B20EC2005008F0476 /* Maths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maths.swift; sourceTree = "<group>"; };
 		DA3603BC20E4399B0056348C /* cat.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cat.jpeg; sourceTree = "<group>"; };
 		DA3603C520E43AFF0056348C /* Atlas.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Atlas.jpeg; sourceTree = "<group>"; };
 		DA5EA43C20C007A500CA418D /* ExploringMetal_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExploringMetal_macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,7 +88,6 @@
 		DA5EA45E20C007A600CA418D /* ExploringMetal_macOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExploringMetal_macOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5EA46220C007A600CA418D /* ExploringMetalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploringMetalUITests.swift; sourceTree = "<group>"; };
 		DA5EA46420C007A600CA418D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DA73FB9420C66AE400B7571F /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		DA74343120E3AC8000F16125 /* ExploringMetal_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExploringMetal_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA74343320E3AC8000F16125 /* AppDelegate_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_iOS.swift; sourceTree = "<group>"; };
 		DA74343820E3AC8000F16125 /* GameViewController_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController_iOS.swift; sourceTree = "<group>"; };
@@ -92,6 +100,10 @@
 		DA74345420E3AC8200F16125 /* ExploringMetal_iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExploringMetal_iOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA74345820E3AC8200F16125 /* ExploringMetal_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploringMetal_iOSUITests.swift; sourceTree = "<group>"; };
 		DA74345A20E3AC8200F16125 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA997D7920EE7E4A00224808 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		DA997D7C20EEA71200224808 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		DA997D8020F0208500224808 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		DA997D8520F025F900224808 /* KeyCodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +161,7 @@
 				DA74344C20E3AC8200F16125 /* ExploringMetal_iOSTests */,
 				DA74345720E3AC8200F16125 /* ExploringMetal_iOSUITests */,
 				DA5EA43D20C007A500CA418D /* Products */,
+				DA997D7F20F0208500224808 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,7 +186,6 @@
 				DA74342C20E3ABFB00F16125 /* macOS */,
 				DA3603BC20E4399B0056348C /* cat.jpeg */,
 				DA3603C520E43AFF0056348C /* Atlas.jpeg */,
-				DA73FB9420C66AE400B7571F /* ShaderTypes.h */,
 				DA5EA44820C007A500CA418D /* Assets.xcassets */,
 				DA5EA44D20C007A500CA418D /* Info.plist */,
 				DA5EA44E20C007A500CA418D /* ExploringMetal.entitlements */,
@@ -244,8 +256,20 @@
 			children = (
 				DA5EA44320C007A500CA418D /* Renderer.swift */,
 				DA5EA44520C007A500CA418D /* Shaders.metal */,
+				DA117E7B20EC2005008F0476 /* Maths.swift */,
+				DA997D7920EE7E4A00224808 /* Protocols.swift */,
+				DA997D7C20EEA71200224808 /* Camera.swift */,
+				DA997D8520F025F900224808 /* KeyCodes.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		DA997D7F20F0208500224808 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DA997D8020F0208500224808 /* Carbon.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -369,6 +393,7 @@
 				TargetAttributes = {
 					DA5EA43B20C007A500CA418D = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 					};
 					DA5EA45220C007A600CA418D = {
@@ -383,6 +408,7 @@
 					};
 					DA74343020E3AC8000F16125 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 0940;
 						ProvisioningStyle = Automatic;
 					};
 					DA74344820E3AC8200F16125 = {
@@ -479,9 +505,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA997D8620F025F900224808 /* KeyCodes.swift in Sources */,
 				DA74342B20E3A5ED00F16125 /* AppDelegate_macOS.swift in Sources */,
 				DA5EA44620C007A500CA418D /* Shaders.metal in Sources */,
 				DA5EA44220C007A500CA418D /* GameViewController_macOS.swift in Sources */,
+				DA997D7A20EE7E4A00224808 /* Protocols.swift in Sources */,
+				DA117E7C20EC2005008F0476 /* Maths.swift in Sources */,
+				DA997D7D20EEA71200224808 /* Camera.swift in Sources */,
 				DA5EA44420C007A500CA418D /* Renderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,9 +536,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA997D8720F025F900224808 /* KeyCodes.swift in Sources */,
 				DA74346520E3AD4800F16125 /* Shaders.metal in Sources */,
 				DA74346420E3AD4000F16125 /* Renderer.swift in Sources */,
 				DA74343920E3AC8000F16125 /* GameViewController_iOS.swift in Sources */,
+				DA997D7B20EE7E4A00224808 /* Protocols.swift in Sources */,
+				DA117E7D20EC2005008F0476 /* Maths.swift in Sources */,
+				DA997D7E20EEA71200224808 /* Camera.swift in Sources */,
 				DA74343420E3AC8000F16125 /* AppDelegate_iOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -696,6 +730,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ExploringMetal/ExploringMetal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -705,7 +740,8 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -714,6 +750,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ExploringMetal/ExploringMetal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -723,7 +760,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
@@ -798,6 +835,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -808,7 +846,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "adilPatel.ExploringMetal-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -818,6 +857,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -828,7 +868,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "adilPatel.ExploringMetal-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

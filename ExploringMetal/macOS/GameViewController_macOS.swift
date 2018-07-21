@@ -14,6 +14,9 @@ class GameViewController: NSViewController {
 
     var renderer: Renderer!
     var mtkView: MTKView!
+    var userInt: UserInteractionDelegate!
+    
+    var mouseIsInView = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,11 +38,92 @@ class GameViewController: NSViewController {
             print("Renderer cannot be initialized")
             return
         }
-
+        
         renderer = newRenderer
 
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
         mtkView.delegate = renderer
+        
+        let area = NSTrackingArea(rect: mtkView.bounds,
+                                  options: NSTrackingArea.Options(rawValue: NSTrackingArea.Options.mouseEnteredAndExited.rawValue | NSTrackingArea.Options.activeInActiveApp.rawValue),
+                                  owner: self,
+                                  userInfo: nil)
+        mtkView.addTrackingArea(area)
+        
+        self.userInt = renderer.camera
+        
+        // Set a block that fires when a key is pressed
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
+            (keyEvent) -> NSEvent? in
+            if self.keyDown(with: keyEvent) {
+                return nil
+            } else {
+                return keyEvent
+            }
+        }
+        
+        // Set a block that fires when a key is released
+        NSEvent.addLocalMonitorForEvents(matching: .keyUp) {
+            (keyEvent) -> NSEvent? in
+            if self.keyUp(with: keyEvent) {
+                return nil
+            } else {
+                return keyEvent
+            }
+        }
+        
+        // Set a block that fires when the mouse is moved
+        NSEvent.addLocalMonitorForEvents(matching: .mouseMoved) {
+            (mouseEvent) -> NSEvent? in
+            if self.mouseMoved(with: mouseEvent) {
+                return nil
+            } else {
+                return mouseEvent
+            }
+        }
+    }
+    
+    func keyDown(with event: NSEvent) -> Bool {
+        
+        userInt.keyDown(key: event.keyCode)
+ 
+        return true
+    }
+    
+    func keyUp(with event: NSEvent) -> Bool {
+        
+        userInt.keyUp(key: event.keyCode)
+        
+        return true
+    }
+    
+    func mouseMoved(with event: NSEvent) -> Bool {
+        
+        if mouseIsInView {
+            userInt.mouseMoved(position: NSEvent.mouseLocation)
+        }
+        
+        return true
+    }
+    
+    override func mouseEntered(with event: NSEvent) {
+        mouseIsInView = true
+    }
+    
+    override func mouseExited(with event: NSEvent) {
+        mouseIsInView = false
+    }
+    
+    override var acceptsFirstResponder: Bool {
+        return true
+    }
+    
+    override func becomeFirstResponder() -> Bool {
+        return true
+    }
+    
+    override func resignFirstResponder() -> Bool {
+        return true
     }
 }
