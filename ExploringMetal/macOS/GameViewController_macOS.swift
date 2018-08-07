@@ -14,7 +14,7 @@ class GameViewController: NSViewController {
 
     var renderer: Renderer!
     var mtkView: MTKView!
-    var userInt: UserInteractionDelegate!
+    var userInt: MacInputDelegate!
     
     var mouseIsInView = false
 
@@ -46,12 +46,13 @@ class GameViewController: NSViewController {
         mtkView.delegate = renderer
         
         let area = NSTrackingArea(rect: mtkView.bounds,
-                                  options: NSTrackingArea.Options(rawValue: NSTrackingArea.Options.mouseEnteredAndExited.rawValue | NSTrackingArea.Options.activeInActiveApp.rawValue),
+                                  options: NSTrackingArea.Options([.mouseEnteredAndExited,
+                                                                   .activeInActiveApp]),
                                   owner: self,
                                   userInfo: nil)
         mtkView.addTrackingArea(area)
         
-        self.userInt = renderer.camera
+        self.userInt = renderer.cameraController
         
         // Set a block that fires when a key is pressed
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {

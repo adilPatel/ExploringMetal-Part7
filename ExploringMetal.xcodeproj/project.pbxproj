@@ -36,6 +36,14 @@
 		DA997D7E20EEA71200224808 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7C20EEA71200224808 /* Camera.swift */; };
 		DA997D8620F025F900224808 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D8520F025F900224808 /* KeyCodes.swift */; };
 		DA997D8720F025F900224808 /* KeyCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D8520F025F900224808 /* KeyCodes.swift */; };
+		DAD9FD6921064A78009F005E /* UserInputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD6821064A78009F005E /* UserInputs.swift */; };
+		DAD9FD6A21064A78009F005E /* UserInputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD6821064A78009F005E /* UserInputs.swift */; };
+		DAD9FD7021090BC0009F005E /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD6F21090BC0009F005E /* CameraController.swift */; };
+		DAD9FD7221090EB6009F005E /* TouchInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD7121090EB6009F005E /* TouchInput.swift */; };
+		DAD9FD7A210AF899009F005E /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD79210AF899009F005E /* CameraController.swift */; };
+		DAD9FD7C210B796C009F005E /* ConvenienceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */; };
+		DAD9FD7D210B796C009F005E /* ConvenienceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */; };
+		DAF351542114846800CE43E6 /* MacInputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF351532114846800CE43E6 /* MacInputs.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +112,12 @@
 		DA997D7C20EEA71200224808 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		DA997D8020F0208500224808 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		DA997D8520F025F900224808 /* KeyCodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCodes.swift; sourceTree = "<group>"; };
+		DAD9FD6821064A78009F005E /* UserInputs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInputs.swift; sourceTree = "<group>"; };
+		DAD9FD6F21090BC0009F005E /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		DAD9FD7121090EB6009F005E /* TouchInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchInput.swift; sourceTree = "<group>"; };
+		DAD9FD79210AF899009F005E /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
+		DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvenienceExtensions.swift; sourceTree = "<group>"; };
+		DAF351532114846800CE43E6 /* MacInputs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacInputs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +231,8 @@
 				DA5EA43F20C007A500CA418D /* AppDelegate_macOS.swift */,
 				DA5EA44120C007A500CA418D /* GameViewController_macOS.swift */,
 				DA5EA44A20C007A500CA418D /* Main.storyboard */,
+				DAD9FD79210AF899009F005E /* CameraController.swift */,
+				DAF351532114846800CE43E6 /* MacInputs.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -247,6 +263,8 @@
 				DA74344120E3AC8200F16125 /* LaunchScreen.storyboard */,
 				DA74343C20E3AC8000F16125 /* Main.storyboard */,
 				DA74344420E3AC8200F16125 /* Info.plist */,
+				DAD9FD6F21090BC0009F005E /* CameraController.swift */,
+				DAD9FD7121090EB6009F005E /* TouchInput.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -260,6 +278,8 @@
 				DA997D7920EE7E4A00224808 /* Protocols.swift */,
 				DA997D7C20EEA71200224808 /* Camera.swift */,
 				DA997D8520F025F900224808 /* KeyCodes.swift */,
+				DAD9FD6821064A78009F005E /* UserInputs.swift */,
+				DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -507,11 +527,15 @@
 			files = (
 				DA997D8620F025F900224808 /* KeyCodes.swift in Sources */,
 				DA74342B20E3A5ED00F16125 /* AppDelegate_macOS.swift in Sources */,
+				DAD9FD7C210B796C009F005E /* ConvenienceExtensions.swift in Sources */,
 				DA5EA44620C007A500CA418D /* Shaders.metal in Sources */,
 				DA5EA44220C007A500CA418D /* GameViewController_macOS.swift in Sources */,
 				DA997D7A20EE7E4A00224808 /* Protocols.swift in Sources */,
+				DAD9FD7A210AF899009F005E /* CameraController.swift in Sources */,
+				DAD9FD6921064A78009F005E /* UserInputs.swift in Sources */,
 				DA117E7C20EC2005008F0476 /* Maths.swift in Sources */,
 				DA997D7D20EEA71200224808 /* Camera.swift in Sources */,
+				DAF351542114846800CE43E6 /* MacInputs.swift in Sources */,
 				DA5EA44420C007A500CA418D /* Renderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -539,8 +563,12 @@
 				DA997D8720F025F900224808 /* KeyCodes.swift in Sources */,
 				DA74346520E3AD4800F16125 /* Shaders.metal in Sources */,
 				DA74346420E3AD4000F16125 /* Renderer.swift in Sources */,
+				DAD9FD7D210B796C009F005E /* ConvenienceExtensions.swift in Sources */,
 				DA74343920E3AC8000F16125 /* GameViewController_iOS.swift in Sources */,
+				DAD9FD7221090EB6009F005E /* TouchInput.swift in Sources */,
 				DA997D7B20EE7E4A00224808 /* Protocols.swift in Sources */,
+				DAD9FD7021090BC0009F005E /* CameraController.swift in Sources */,
+				DAD9FD6A21064A78009F005E /* UserInputs.swift in Sources */,
 				DA117E7D20EC2005008F0476 /* Maths.swift in Sources */,
 				DA997D7E20EEA71200224808 /* Camera.swift in Sources */,
 				DA74343420E3AC8000F16125 /* AppDelegate_iOS.swift in Sources */,

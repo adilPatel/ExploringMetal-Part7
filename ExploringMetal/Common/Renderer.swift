@@ -12,11 +12,13 @@ import Metal
 import MetalKit
 import simd
 
+let buffersInFlight = 3
+
 enum RendererError: Error {
     case badVertexDescriptor
 }
 
-struct Uniforms {
+struct ShaderConstants {
     var modelViewMatrix = matrix_identity_float4x4
     var projectionMatrix = matrix_identity_float4x4
     var normalMatrix = matrix_identity_float3x3
@@ -27,8 +29,10 @@ class Renderer: NSObject, MTKViewDelegate {
     // A handle to our device (which is the GPU)
     public let device: MTLDevice
     
+    public let cameraController: CameraController
+    
     // The camera of the scene
-    public let camera: Camera
+    var camera: Camera
     
     // The Metal render pipeline state
     var pipelineState: MTLRenderPipelineState
@@ -42,8 +46,11 @@ class Renderer: NSObject, MTKViewDelegate {
     // Moves our shape to camera space
     var modelMatrix = float4x4()
     
-    // Holds the uniforms
-    var uniforms: Uniforms
+    // The array of buffers used
+    var constantBuffers: [ShaderConstants]
+    
+    // The index of the current buffer being written to and binded
+    var constantBufferIndex = 0
     
     // Will send our vertex array to Metal
     var vertexBuffer: MTLBuffer!
@@ -60,10 +67,9 @@ class Renderer: NSObject, MTKViewDelegate {
     // The texture sampler which will be passed on to Metal
     var samplerState: MTLSamplerState?
     
-    var semaphore = DispatchSemaphore(value: 1)
+    var semaphore = DispatchSemaphore(value: buffersInFlight)
     
     init?(metalKitView: MTKView) {
-        
         // Initialising the crucial view, device, and command queue parameters
         device = metalKitView.device!
         
@@ -81,14 +87,15 @@ class Renderer: NSObject, MTKViewDelegate {
                         aspectRatio: aspectRatio,
                         nearZ: 0.1,
                         farZ: 100.0)
+        cameraController = CameraController(camera: camera)
         
         modelMatrix = Maths.createTranslationMatrix(vector: float3(0.0, 0.0, -5.0))
-        let modelViewMatrix = camera.currentViewMatrix * modelMatrix
-        let normalMatrix = Maths.createNormalMatrix(matrix: modelViewMatrix)
-        uniforms = Uniforms()
-        uniforms.modelViewMatrix = modelViewMatrix
-        uniforms.projectionMatrix = camera.projectionMatrix
-        uniforms.normalMatrix = normalMatrix
+        
+        var shaderConstant = ShaderConstants()
+        shaderConstant.modelViewMatrix  = modelMatrix
+        shaderConstant.projectionMatrix = camera.projectionMatrix
+        shaderConstant.normalMatrix = Maths.createNormalMatrix(matrix: modelMatrix)
+        constantBuffers = Array<ShaderConstants>(repeating: shaderConstant, count: buffersInFlight)
         
         let vertexDescriptor = makeVertexDescriptor()
         
@@ -166,8 +173,8 @@ class Renderer: NSObject, MTKViewDelegate {
         camera.updateState()
         let modelViewMatrix = camera.currentViewMatrix * modelMatrix
         let normalMatrix = Maths.createNormalMatrix(matrix: modelViewMatrix)
-        uniforms.modelViewMatrix = modelViewMatrix
-        uniforms.normalMatrix = normalMatrix
+        constantBuffers[constantBufferIndex].modelViewMatrix = modelViewMatrix
+        constantBuffers[constantBufferIndex].normalMatrix = normalMatrix
         
     }
 
@@ -186,16 +193,14 @@ class Renderer: NSObject, MTKViewDelegate {
             
             if let renderPassDescriptor = view.currentRenderPassDescriptor,
                 let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-                
-                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0)
-                // When loading the colour buffer, we clear it to the above-mentioned colour, which is black
-                renderPassDescriptor.colorAttachments[0].loadAction = .clear
+     
                 renderEncoder.label = "Application Render Encoder"
                 
                 // Copy the data into a buffer and set the render pipeline state
                 renderEncoder.pushDebugGroup("Encoding vertex arguments")
+                var constantBuffer = constantBuffers[constantBufferIndex]
                 renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-                renderEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
+                renderEncoder.setVertexBytes(&constantBuffer, length: MemoryLayout<ShaderConstants>.size, index: 1)
                 renderEncoder.popDebugGroup()
                 
                 renderEncoder.pushDebugGroup("Assigning render and depth states")
@@ -238,6 +243,7 @@ class Renderer: NSObject, MTKViewDelegate {
                 self.semaphore.signal()
             }
             commandBuffer.commit()
+            constantBufferIndex = (constantBufferIndex + 1) % buffersInFlight
             
         }
         
@@ -251,7 +257,9 @@ class Renderer: NSObject, MTKViewDelegate {
                                                                aspectRatio: aspect,
                                                                nearZ: 0.1,
                                                                farZ: 100.0)
-        uniforms.projectionMatrix = camera.projectionMatrix
+        for (i, _) in constantBuffers.enumerated() {
+            constantBuffers[i].projectionMatrix = camera.projectionMatrix
+        }
         
     }
     

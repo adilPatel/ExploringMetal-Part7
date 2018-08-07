@@ -6,7 +6,7 @@
 //  Copyright © 2018 Adil Patel. All rights reserved.
 //
 
-import Cocoa
+import Foundation
 import simd
 
 class Maths: NSObject {
@@ -127,18 +127,5 @@ class Maths: NSObject {
     
 }
 
-extension float3 {
-    
-    init(_ fourVector: float4) {
-        self.init(fourVector.x, fourVector.y, fourVector.z)
-    }
-    
-}
 
-extension float4 {
-    
-    init(_ threeVector: float3, _ fourth: Float) {
-        self.init(threeVector.x, threeVector.y, threeVector.z, fourth)
-    }
-    
-}
+
