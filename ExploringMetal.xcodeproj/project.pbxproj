@@ -9,10 +9,6 @@
 /* Begin PBXBuildFile section */
 		DA117E7C20EC2005008F0476 /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA117E7B20EC2005008F0476 /* Maths.swift */; };
 		DA117E7D20EC2005008F0476 /* Maths.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA117E7B20EC2005008F0476 /* Maths.swift */; };
-		DA3603BD20E4399B0056348C /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603BC20E4399B0056348C /* cat.jpeg */; };
-		DA3603BE20E4399B0056348C /* cat.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603BC20E4399B0056348C /* cat.jpeg */; };
-		DA3603C620E43AFF0056348C /* Atlas.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603C520E43AFF0056348C /* Atlas.jpeg */; };
-		DA3603C720E43AFF0056348C /* Atlas.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = DA3603C520E43AFF0056348C /* Atlas.jpeg */; };
 		DA5EA44220C007A500CA418D /* GameViewController_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44120C007A500CA418D /* GameViewController_macOS.swift */; };
 		DA5EA44420C007A500CA418D /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44320C007A500CA418D /* Renderer.swift */; };
 		DA5EA44620C007A500CA418D /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44520C007A500CA418D /* Shaders.metal */; };
@@ -20,6 +16,12 @@
 		DA5EA44C20C007A500CA418D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA5EA44A20C007A500CA418D /* Main.storyboard */; };
 		DA5EA45820C007A600CA418D /* ExploringMetalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA45720C007A600CA418D /* ExploringMetalTests.swift */; };
 		DA5EA46320C007A600CA418D /* ExploringMetalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA46220C007A600CA418D /* ExploringMetalUITests.swift */; };
+		DA675FFD212B551100E82E5F /* Skybox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA675FFC212B551100E82E5F /* Skybox.swift */; };
+		DA675FFE212B551100E82E5F /* Skybox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA675FFC212B551100E82E5F /* Skybox.swift */; };
+		DA676022212F364800E82E5F /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = DA676021212F364700E82E5F /* Plane.obj */; };
+		DA676023212F364800E82E5F /* Plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = DA676021212F364700E82E5F /* Plane.obj */; };
+		DA676025212F365600E82E5F /* tex_airplane02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DA676024212F365600E82E5F /* tex_airplane02.jpg */; };
+		DA676026212F365600E82E5F /* tex_airplane02.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DA676024212F365600E82E5F /* tex_airplane02.jpg */; };
 		DA74342B20E3A5ED00F16125 /* AppDelegate_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA43F20C007A500CA418D /* AppDelegate_macOS.swift */; };
 		DA74343420E3AC8000F16125 /* AppDelegate_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA74343320E3AC8000F16125 /* AppDelegate_iOS.swift */; };
 		DA74343920E3AC8000F16125 /* GameViewController_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA74343820E3AC8000F16125 /* GameViewController_iOS.swift */; };
@@ -30,6 +32,7 @@
 		DA74346420E3AD4000F16125 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44320C007A500CA418D /* Renderer.swift */; };
 		DA74346520E3AD4800F16125 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA5EA44520C007A500CA418D /* Shaders.metal */; };
 		DA74346720E3AEB500F16125 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA5EA44820C007A500CA418D /* Assets.xcassets */; };
+		DA87D4C321302C9200EC1A21 /* Skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = DA87D4C221302C9200EC1A21 /* Skybox.png */; };
 		DA997D7A20EE7E4A00224808 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7920EE7E4A00224808 /* Protocols.swift */; };
 		DA997D7B20EE7E4A00224808 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7920EE7E4A00224808 /* Protocols.swift */; };
 		DA997D7D20EEA71200224808 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA997D7C20EEA71200224808 /* Camera.swift */; };
@@ -43,7 +46,11 @@
 		DAD9FD7A210AF899009F005E /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD79210AF899009F005E /* CameraController.swift */; };
 		DAD9FD7C210B796C009F005E /* ConvenienceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */; };
 		DAD9FD7D210B796C009F005E /* ConvenienceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */; };
+		DAF29F2A212589DB0032F04A /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF29F29212589DB0032F04A /* Mesh.swift */; };
+		DAF29F2B212589DB0032F04A /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF29F29212589DB0032F04A /* Mesh.swift */; };
 		DAF351542114846800CE43E6 /* MacInputs.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF351532114846800CE43E6 /* MacInputs.swift */; };
+		DAF35159211B0F4B00CE43E6 /* Texture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF35158211B0F4B00CE43E6 /* Texture.swift */; };
+		DAF3515A211B0F4B00CE43E6 /* Texture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF35158211B0F4B00CE43E6 /* Texture.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,8 +86,6 @@
 
 /* Begin PBXFileReference section */
 		DA117E7B20EC2005008F0476 /* Maths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maths.swift; sourceTree = "<group>"; };
-		DA3603BC20E4399B0056348C /* cat.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cat.jpeg; sourceTree = "<group>"; };
-		DA3603C520E43AFF0056348C /* Atlas.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Atlas.jpeg; sourceTree = "<group>"; };
 		DA5EA43C20C007A500CA418D /* ExploringMetal_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExploringMetal_macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5EA43F20C007A500CA418D /* AppDelegate_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_macOS.swift; sourceTree = "<group>"; };
 		DA5EA44120C007A500CA418D /* GameViewController_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController_macOS.swift; sourceTree = "<group>"; };
@@ -96,6 +101,10 @@
 		DA5EA45E20C007A600CA418D /* ExploringMetal_macOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExploringMetal_macOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA5EA46220C007A600CA418D /* ExploringMetalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploringMetalUITests.swift; sourceTree = "<group>"; };
 		DA5EA46420C007A600CA418D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA675FF52125AA6100E82E5F /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		DA675FFC212B551100E82E5F /* Skybox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skybox.swift; sourceTree = "<group>"; };
+		DA676021212F364700E82E5F /* Plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Plane.obj; sourceTree = "<group>"; };
+		DA676024212F365600E82E5F /* tex_airplane02.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tex_airplane02.jpg; sourceTree = "<group>"; };
 		DA74343120E3AC8000F16125 /* ExploringMetal_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExploringMetal_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA74343320E3AC8000F16125 /* AppDelegate_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate_iOS.swift; sourceTree = "<group>"; };
 		DA74343820E3AC8000F16125 /* GameViewController_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController_iOS.swift; sourceTree = "<group>"; };
@@ -108,6 +117,7 @@
 		DA74345420E3AC8200F16125 /* ExploringMetal_iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExploringMetal_iOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA74345820E3AC8200F16125 /* ExploringMetal_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploringMetal_iOSUITests.swift; sourceTree = "<group>"; };
 		DA74345A20E3AC8200F16125 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DA87D4C221302C9200EC1A21 /* Skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Skybox.png; sourceTree = "<group>"; };
 		DA997D7920EE7E4A00224808 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		DA997D7C20EEA71200224808 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		DA997D8020F0208500224808 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -117,7 +127,9 @@
 		DAD9FD7121090EB6009F005E /* TouchInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchInput.swift; sourceTree = "<group>"; };
 		DAD9FD79210AF899009F005E /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvenienceExtensions.swift; sourceTree = "<group>"; };
+		DAF29F29212589DB0032F04A /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
 		DAF351532114846800CE43E6 /* MacInputs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacInputs.swift; sourceTree = "<group>"; };
+		DAF35158211B0F4B00CE43E6 /* Texture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texture.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,8 +210,10 @@
 				DA74346820E3AECD00F16125 /* Common */,
 				DA74346620E3AE3700F16125 /* iOS */,
 				DA74342C20E3ABFB00F16125 /* macOS */,
-				DA3603BC20E4399B0056348C /* cat.jpeg */,
-				DA3603C520E43AFF0056348C /* Atlas.jpeg */,
+				DA676024212F365600E82E5F /* tex_airplane02.jpg */,
+				DA87D4C221302C9200EC1A21 /* Skybox.png */,
+				DA676021212F364700E82E5F /* Plane.obj */,
+				DA675FF52125AA6100E82E5F /* ShaderTypes.h */,
 				DA5EA44820C007A500CA418D /* Assets.xcassets */,
 				DA5EA44D20C007A500CA418D /* Info.plist */,
 				DA5EA44E20C007A500CA418D /* ExploringMetal.entitlements */,
@@ -280,6 +294,9 @@
 				DA997D8520F025F900224808 /* KeyCodes.swift */,
 				DAD9FD6821064A78009F005E /* UserInputs.swift */,
 				DAD9FD7B210B796C009F005E /* ConvenienceExtensions.swift */,
+				DAF35158211B0F4B00CE43E6 /* Texture.swift */,
+				DAF29F29212589DB0032F04A /* Mesh.swift */,
+				DA675FFC212B551100E82E5F /* Skybox.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -471,10 +488,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA3603BD20E4399B0056348C /* cat.jpeg in Resources */,
 				DA5EA44920C007A500CA418D /* Assets.xcassets in Resources */,
 				DA5EA44C20C007A500CA418D /* Main.storyboard in Resources */,
-				DA3603C620E43AFF0056348C /* Atlas.jpeg in Resources */,
+				DA676022212F364800E82E5F /* Plane.obj in Resources */,
+				DA87D4C321302C9200EC1A21 /* Skybox.png in Resources */,
+				DA676025212F365600E82E5F /* tex_airplane02.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,11 +514,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA3603BE20E4399B0056348C /* cat.jpeg in Resources */,
 				DA74346720E3AEB500F16125 /* Assets.xcassets in Resources */,
-				DA3603C720E43AFF0056348C /* Atlas.jpeg in Resources */,
 				DA74344320E3AC8200F16125 /* LaunchScreen.storyboard in Resources */,
 				DA74343E20E3AC8000F16125 /* Main.storyboard in Resources */,
+				DA676023212F364800E82E5F /* Plane.obj in Resources */,
+				DA676026212F365600E82E5F /* tex_airplane02.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,11 +549,14 @@
 				DA5EA44620C007A500CA418D /* Shaders.metal in Sources */,
 				DA5EA44220C007A500CA418D /* GameViewController_macOS.swift in Sources */,
 				DA997D7A20EE7E4A00224808 /* Protocols.swift in Sources */,
+				DA675FFD212B551100E82E5F /* Skybox.swift in Sources */,
 				DAD9FD7A210AF899009F005E /* CameraController.swift in Sources */,
 				DAD9FD6921064A78009F005E /* UserInputs.swift in Sources */,
 				DA117E7C20EC2005008F0476 /* Maths.swift in Sources */,
 				DA997D7D20EEA71200224808 /* Camera.swift in Sources */,
+				DAF29F2A212589DB0032F04A /* Mesh.swift in Sources */,
 				DAF351542114846800CE43E6 /* MacInputs.swift in Sources */,
+				DAF35159211B0F4B00CE43E6 /* Texture.swift in Sources */,
 				DA5EA44420C007A500CA418D /* Renderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -566,11 +587,14 @@
 				DAD9FD7D210B796C009F005E /* ConvenienceExtensions.swift in Sources */,
 				DA74343920E3AC8000F16125 /* GameViewController_iOS.swift in Sources */,
 				DAD9FD7221090EB6009F005E /* TouchInput.swift in Sources */,
+				DA675FFE212B551100E82E5F /* Skybox.swift in Sources */,
 				DA997D7B20EE7E4A00224808 /* Protocols.swift in Sources */,
 				DAD9FD7021090BC0009F005E /* CameraController.swift in Sources */,
 				DAD9FD6A21064A78009F005E /* UserInputs.swift in Sources */,
 				DA117E7D20EC2005008F0476 /* Maths.swift in Sources */,
+				DAF29F2B212589DB0032F04A /* Mesh.swift in Sources */,
 				DA997D7E20EEA71200224808 /* Camera.swift in Sources */,
+				DAF3515A211B0F4B00CE43E6 /* Texture.swift in Sources */,
 				DA74343420E3AC8000F16125 /* AppDelegate_iOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -766,11 +790,13 @@
 				INFOPLIST_FILE = ExploringMetal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_HEADER_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -786,10 +812,12 @@
 				INFOPLIST_FILE = ExploringMetal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_HEADER_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = adilPatel.ExploringMetal;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
 				SWIFT_VERSION = 4.0;
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -871,10 +899,11 @@
 				INFOPLIST_FILE = ExploringMetal/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_HEADER_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "adilPatel.ExploringMetal-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -893,10 +922,11 @@
 				INFOPLIST_FILE = ExploringMetal/iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_HEADER_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "adilPatel.ExploringMetal-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = ExploringMetal/ShaderTypes.h;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

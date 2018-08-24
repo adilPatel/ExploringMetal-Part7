@@ -11,14 +11,9 @@
 #include <metal_stdlib>
 #include <simd/simd.h>
 
-using namespace metal;
+#import "ExploringMetal/ShaderTypes.h"
 
-// The uniforms... you can see a correspondence with the host side
-typedef struct {
-    float4x4 modelViewMatrix;
-    float4x4 projectionMatrix;
-    float3x3 normalMatrix;
-} Uniforms;
+using namespace metal;
 
 // The layout in the vertex array
 typedef struct {
@@ -36,16 +31,17 @@ typedef struct {
 } RasteriserData;
 
 // Light and material data
-constant half lightPower = 50.0h;
-constant half shininess  = 50.0h;
-constant half4 lightColour = half4(1.0h, 1.0h, 1.0h, 1.0h);
-constant half4 ambientColour  = half4(0.1h, 0.0h, 0.0h, 1.0h);
-constant half4 specularColour = half4(1.0h, 1.0h, 1.0h, 1.0h);
-constant half3 lightPos  = half3(4.0h, 4.0h, 0.0h);
+constant half lightPower = 250.0h;
+constant half shininess  = 19.607843h;
+constant half4 lightColour = half4(0.5h, 0.5h, 0.5h, 1.0h);
+constant half4 ambientColour  = half4(0.05h, 0.05h, 0.05h, 1.0h);
+constant half4 specularColour = half4(0.1h, 0.1h, 0.1h, 1.0h);
+constant half3 lightPos  = half3(4.0h, 4.0h, 4.0h);
 
 vertex RasteriserData helloVertexShader(uint vertexID [[vertex_id]],
-                                        const device Vertex *vertices [[buffer(0)]],
-                                        constant Uniforms &uniforms [[buffer(1)]]) {
+                                        const device Vertex *vertices [[buffer(BufferIndexMeshPositions)]],
+                                        constant ObjectTransforms &uniforms [[buffer(BufferIndexLocalUniforms)]],
+                                        constant PerFrameConstants &frameConstants [[buffer(BufferIndexPerFrameConstants)]]) {
     
     
     half3 position = half3(vertices[vertexID].position);
@@ -55,7 +51,7 @@ vertex RasteriserData helloVertexShader(uint vertexID [[vertex_id]],
     transformedPos = half4x4(uniforms.modelViewMatrix) * transformedPos;
     
     RasteriserData out;
-    half4 projected = half4x4(uniforms.projectionMatrix) * transformedPos;
+    half4 projected = half4x4(frameConstants.projectionMatrix) * transformedPos;
     normal = half3x3(uniforms.normalMatrix) * normal;
     
     out.position = float4(projected); // Conversions from halfs to floats are free! :D
@@ -93,4 +89,38 @@ fragment half4 helloFragmentShader(RasteriserData in [[stage_in]],
     half4 brightness = lightPower * (1.0h / lightLength) * lightColour;
     
     return ambientColour + (diffuse + specular) * brightness;
+    
+}
+
+// ----- Skybox shaders -----
+
+typedef struct {
+    packed_float3 position;
+} SkyboxVertex;
+
+typedef struct {
+    float4 position [[position]];
+    float3 texCoord;
+} SkyboxRasteriserData;
+
+vertex SkyboxRasteriserData SkyboxVertexShader(uint vertexID [[vertex_id]],
+                                               const device SkyboxVertex *vertices [[buffer(BufferIndexMeshPositions)]],
+                                               constant SkyboxTransforms &transforms [[buffer(BufferIndexLocalUniforms)]]) {
+    
+    float3 position = float3(vertices[vertexID].position);
+    
+    SkyboxRasteriserData out;
+    out.position = transforms.modelViewProjectionMatrix * float4(position, 1.0f);
+    out.texCoord = position;
+    
+    return out;
+    
+}
+
+fragment half4 SkyboxFragmentShader(SkyboxRasteriserData in [[stage_in]],
+                                    texturecube<half, access::sample> texture,
+                                    sampler samplerCube [[sampler(0)]]) {
+    
+    return texture.sample(samplerCube, in.texCoord);
+    
 }

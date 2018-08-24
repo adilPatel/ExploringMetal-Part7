@@ -102,7 +102,7 @@ class Maths: NSObject {
         
     }
     
-    static func createNormalMatrix(matrix: float4x4) -> float3x3 {
+    static func createNormalMatrix(fromMVMatrix matrix: float4x4) -> float3x3 {
         let upperleft = createMatrix3x3UpperLeft(matrix: matrix)
         return (upperleft.inverse).transpose
     }

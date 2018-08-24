@@ -12,30 +12,25 @@ import Metal
 import MetalKit
 import simd
 
-let buffersInFlight = 3
-
 enum RendererError: Error {
     case badVertexDescriptor
 }
 
-struct ShaderConstants {
-    var modelViewMatrix = matrix_identity_float4x4
-    var projectionMatrix = matrix_identity_float4x4
-    var normalMatrix = matrix_identity_float3x3
-}
+let buffersInFlight = 3
 
 class Renderer: NSObject, MTKViewDelegate {
 
     // A handle to our device (which is the GPU)
     public let device: MTLDevice
     
+    // Controls our camera
     public let cameraController: CameraController
     
     // The camera of the scene
     var camera: Camera
     
     // The Metal render pipeline state
-    var pipelineState: MTLRenderPipelineState
+    var meshPipelineState: MTLRenderPipelineState!
     
     // The Metal depth stencil state
     var depthState: MTLDepthStencilState
@@ -43,30 +38,37 @@ class Renderer: NSObject, MTKViewDelegate {
     // The Metal command queue
     let commandQueue: MTLCommandQueue
     
-    // Moves our shape to camera space
-    var modelMatrix = float4x4()
-    
     // The array of buffers used
-    var constantBuffers: [ShaderConstants]
+    var constantBuffers = Array<MTLBuffer>()
     
     // The index of the current buffer being written to and binded
     var constantBufferIndex = 0
     
-    // Will send our vertex array to Metal
-    var vertexBuffer: MTLBuffer!
-    
-    // Will use to describe the polygons
-    var indexBuffer: MTLBuffer!
-    
-    // Contains data of the geometry
-    var subMesh: MTKSubmesh!
-    
-    // Self-explanatory
-    var sphereTexture: MTLTexture!
-    
+    // The data which is constant across all objects in a single frame
+    var frameConstants: PerFrameConstants
+        
     // The texture sampler which will be passed on to Metal
-    var samplerState: MTLSamplerState?
+    var sampler: Sampler
     
+    // All the meshes present in this scene
+    var meshes = Array<Mesh>()
+    
+    // All the per-object transforms expressed as data structs
+    var objectTransforms = Array<ObjectTransforms>()
+    
+    // This is similar to the above, but only for the skybox
+    var skyboxTransforms: [SkyboxTransforms]
+    
+    // A handle to our skybox
+    var skybox: Skybox!
+    
+    // All the model matrices for each object
+    var modelMatrices = Array<float4x4>()
+    
+    // The textures for each object
+    var textures = Array<Texture>()
+    
+    // Our semaphore for triple buffering
     var semaphore = DispatchSemaphore(value: buffersInFlight)
     
     init?(metalKitView: MTKView) {
@@ -80,71 +82,6 @@ class Renderer: NSObject, MTKViewDelegate {
         
         metalKitView.depthStencilPixelFormat = .depth32Float_stencil8
         
-        // Initialising the transform matrices
-        let size = metalKitView.bounds.size
-        let aspectRatio = Float(size.width) / Float(size.height)
-        camera = Camera(fovy: Maths.degreesToRadians(degrees: 65.0),
-                        aspectRatio: aspectRatio,
-                        nearZ: 0.1,
-                        farZ: 100.0)
-        cameraController = CameraController(camera: camera)
-        
-        modelMatrix = Maths.createTranslationMatrix(vector: float3(0.0, 0.0, -5.0))
-        
-        var shaderConstant = ShaderConstants()
-        shaderConstant.modelViewMatrix  = modelMatrix
-        shaderConstant.projectionMatrix = camera.projectionMatrix
-        shaderConstant.normalMatrix = Maths.createNormalMatrix(matrix: modelMatrix)
-        constantBuffers = Array<ShaderConstants>(repeating: shaderConstant, count: buffersInFlight)
-        
-        let vertexDescriptor = makeVertexDescriptor()
-        
-        // Create the box in a more elegant and procedural manner
-        let mesh: MTKMesh
-        let componentsPerRow = 3 + 3 + 2
-        let stride = MemoryLayout<Float>.size * componentsPerRow
-        let endPoint = 2601
-        
-        do {
-            mesh = try makeMesh(device: device, vertexDescriptor: vertexDescriptor)
-            let mdlVertexBuffer = mesh.vertexBuffers[0].buffer
-            vertexBuffer = device.makeBuffer(bytes: mdlVertexBuffer.contents(),
-                                                  length: stride * endPoint,
-                                                  options: .cpuCacheModeWriteCombined)
-            vertexBuffer.label = "Sphere Vertex Buffer"
-            subMesh = mesh.submeshes[0]
-            indexBuffer = subMesh.indexBuffer.buffer
-            indexBuffer.label = "Sphere Index Buffer"
-        } catch {
-            print("ERROR: Unable to create mesh.  Error info: \(error)")
-            return nil
-        }
-        
-
-        
-        // We're creating handles to the shaders...
-        let library = device.makeDefaultLibrary()
-        let vertexFunction = library?.makeFunction(name: "helloVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "helloFragmentShader")
-        
-        // Here we create the render pipeline state. However, Metal doesn't allow
-        // us to create one directly; we must use a descriptor
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
-        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
-        pipelineDescriptor.vertexDescriptor = vertexDescriptor
-        pipelineDescriptor.label = "Main Render Pipeline State"
-        
-        do {
-            try pipelineState = device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-        } catch let error {
-            print("ERROR: Failed to create the render pipeline state with error:\n\(error)")
-            return nil
-        }
-        
         // Depth testing
         let depthStateDesciptor = MTLDepthStencilDescriptor()
         depthStateDesciptor.depthCompareFunction = .less
@@ -153,28 +90,131 @@ class Renderer: NSObject, MTKViewDelegate {
         guard let state = device.makeDepthStencilState(descriptor:depthStateDesciptor) else { return nil }
         depthState = state
         
-        do {
-            sphereTexture = try createTexture(device: device, assetName: "Atlas", assetExtension: "jpeg")
-            sphereTexture.label = "Atlas Texture"
-            
-        } catch {
-            print("ERROR: Failed to load texture with error:\n\(error)")
+        sampler = Sampler(descriptor: createSamplerDescriptor(), device: device)
+        
+        // Initialising the camera
+        let size = metalKitView.bounds.size
+        let aspectRatio = Float(size.width) / Float(size.height)
+        camera = Camera(fovy: Maths.degreesToRadians(degrees: 65.0),
+                        aspectRatio: aspectRatio,
+                        nearZ: 0.1,
+                        farZ: 100.0,
+                        position: float3(-5.0, 1.0, 5.0))
+        cameraController = CameraController(camera: camera)
+        let projectionMatrix = camera.projectionMatrix
+        
+        // Then the frame constants (which are consistent across all objects)
+        frameConstants = PerFrameConstants()
+        frameConstants.projectionMatrix = projectionMatrix
+        
+        // Allocate the skybox constant buffers. We'll also use 3 in case of triple-buffering
+        var skyConstants = SkyboxTransforms()
+        skyConstants.modelViewProjectionMatrix = projectionMatrix * camera.rotationMatrix
+        skyboxTransforms = Array<SkyboxTransforms>(repeating: skyConstants, count: buffersInFlight)
+        
+        super.init()
+        
+        initialiseScene()
+        
+        // At this point, we only have an array full of model view matrices. We have to create the object
+        // transform structures
+        for modelMatrix in modelMatrices {
+            var transform = ObjectTransforms()
+            transform.modelViewMatrix = camera.currentViewMatrix * modelMatrix
+            transform.normalMatrix = Maths.createNormalMatrix(fromMVMatrix: transform.modelViewMatrix)
+            objectTransforms.append(transform)
         }
         
-       samplerState = createSampler(device: device)
+        // Now we allocate the three MTLBuffers in flight and fill them up
+        var bufferLength = MemoryLayout<PerFrameConstants>.stride
+        bufferLength += MemoryLayout<ObjectTransforms>.stride * objectTransforms.count
+        for _ in 0..<buffersInFlight {
+            
+            if let buffer = device.makeBuffer(length: bufferLength, options: .cpuCacheModeWriteCombined) {
+                updateAllConstants(buffer)
+                constantBuffers.append(buffer)
+            }
+            
+        }
         
-       super.init()
-
+        // We're creating handles to the shaders...
+        let library = device.makeDefaultLibrary()
+        let vertexFunction = library?.makeFunction(name: "helloVertexShader")
+        let fragmentFunction = library?.makeFunction(name: "helloFragmentShader")
+ 
+        // Here we create the render pipeline state. However, Metal doesn't allow
+        // us to create one directly; we must use a descriptor
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.vertexDescriptor = meshes[0].vertexDescriptor
+        pipelineDescriptor.label = "Main Render Pipeline State"
+        
+        do {
+            try meshPipelineState = device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch let error {
+            print("ERROR: Failed to create the render pipeline state with error:\n\(error)")
+            return nil
+        }
+        
+        let skyboxVertexFunction = library?.makeFunction(name: "SkyboxVertexShader")
+        let skyboxFragmentFunction = library?.makeFunction(name: "SkyboxFragmentShader")
+        // And now the skybox
+        skybox = Skybox(device: device,
+                        vertexFunction: skyboxVertexFunction,
+                        fragmentFunction: skyboxFragmentFunction,
+                        colourPixelFormat: metalKitView.colorPixelFormat,
+                        depthStencilPixelFormat: metalKitView.depthStencilPixelFormat)
+        
+    }
+    
+    func initialiseScene() {
+        
+        let biplaneGeometry = MeshGeometry(modelFile: "Plane.obj", device: device)
+        let biplaneMesh = Mesh(name: "Biplane", meshGeometry: biplaneGeometry)
+        meshes.append(biplaneMesh)
+        
+        let biplaneTexture = Texture(name: "Biplane Texture",
+                                     file: "tex_airplane02.jpg",
+                                     createMipMaps: true,
+                                     textureStorage: .private,
+                                     usage: .shaderRead,
+                                     cpuCacheMode: .defaultCache,
+                                     device: device)
+        textures.append(biplaneTexture)
+        modelMatrices.append(matrix_identity_float4x4)
+        
         
     }
 
     func updateGameState() {
         
         camera.updateState()
-        let modelViewMatrix = camera.currentViewMatrix * modelMatrix
-        let normalMatrix = Maths.createNormalMatrix(matrix: modelViewMatrix)
-        constantBuffers[constantBufferIndex].modelViewMatrix = modelViewMatrix
-        constantBuffers[constantBufferIndex].normalMatrix = normalMatrix
+        let projectionMatrix = camera.projectionMatrix
+        let viewMatrix = camera.currentViewMatrix
+        
+        // First we update all the per-object constants in the array
+        for (i, modelMatrix) in modelMatrices.enumerated() {
+            
+            let modelViewMatrix = viewMatrix * modelMatrix
+            let normalMatrix = Maths.createNormalMatrix(fromMVMatrix: modelViewMatrix)
+            var transforms = ObjectTransforms()
+            transforms.modelViewMatrix = modelViewMatrix
+            transforms.normalMatrix = normalMatrix
+            
+            objectTransforms[i] = transforms
+            
+        }
+        
+        // After which, we store them in the active constant buffer
+        updateAllConstants(constantBuffers[constantBufferIndex])
+        
+        // Then the skybox. It keeps the scene alive... it's the real MVP :')
+        let skyMVP = projectionMatrix * camera.rotationMatrix
+        skyboxTransforms[constantBufferIndex].modelViewProjectionMatrix = skyMVP
         
     }
 
@@ -191,43 +231,59 @@ class Renderer: NSObject, MTKViewDelegate {
             commandBuffer.label = "Application Command Buffer"
             updateGameState()
             
-            if let renderPassDescriptor = view.currentRenderPassDescriptor,
-                let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-     
-                renderEncoder.label = "Application Render Encoder"
-                
-                // Copy the data into a buffer and set the render pipeline state
-                renderEncoder.pushDebugGroup("Encoding vertex arguments")
-                var constantBuffer = constantBuffers[constantBufferIndex]
-                renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-                renderEncoder.setVertexBytes(&constantBuffer, length: MemoryLayout<ShaderConstants>.size, index: 1)
-                renderEncoder.popDebugGroup()
+            let renderPassDescriptor = view.currentRenderPassDescriptor
+            renderPassDescriptor?.colorAttachments[0].loadAction = .dontCare // Don't need to clear to black 
+            if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor!) {
+            
+//                renderEncoder.label = "Application Render Encoder"
                 
                 renderEncoder.pushDebugGroup("Assigning render and depth states")
-                renderEncoder.setRenderPipelineState(pipelineState)
+                renderEncoder.setRenderPipelineState(meshPipelineState)
                 renderEncoder.setDepthStencilState(depthState)
                 renderEncoder.popDebugGroup()
-                
-                renderEncoder.pushDebugGroup("Assigning fragment arguments")
-                renderEncoder.setFragmentTexture(sphereTexture, index: 0)
-                renderEncoder.setFragmentSamplerState(samplerState, index: 0)
-                renderEncoder.popDebugGroup()
-                
+
                 renderEncoder.pushDebugGroup("Setting the cull mode")
                 renderEncoder.setFrontFacing(.counterClockwise)
                 renderEncoder.setCullMode(.back)
                 renderEncoder.popDebugGroup()
-                
-                let primitiveType = subMesh.primitiveType
-                let indexCount = subMesh.indexCount
-                let indexType  = subMesh.indexType
-                
-                renderEncoder.pushDebugGroup("Draw call")
-                renderEncoder.drawIndexedPrimitives(type: primitiveType,
-                                                    indexCount: indexCount,
-                                                    indexType: indexType,
-                                                    indexBuffer: indexBuffer,
-                                                    indexBufferOffset: 0)
+
+                let constantBuffer = constantBuffers[constantBufferIndex]
+
+                renderEncoder.pushDebugGroup("Working on the meshes")
+                renderEncoder.setVertexBuffer(constantBuffer, offset: 0, index: BufferIndex.localUniforms.rawValue)
+                renderEncoder.setVertexBuffer(constantBuffer, offset: 0, index: BufferIndex.perFrameConstants.rawValue)
+
+                // Below looks kinda complex, but it really isn't. All we do is iterate though all meshes,
+                // bind their constants to the shaders, and then draw them. We increment the buffer offset in each
+                // step to select the correct region of the constant buffer
+                var offset = MemoryLayout<PerFrameConstants>.stride
+                let stride = MemoryLayout<ObjectTransforms>.stride
+                for (i, mesh) in meshes.enumerated() {
+                    renderEncoder.pushDebugGroup("Working on \(mesh.mtkMesh.name)")
+
+                    renderEncoder.pushDebugGroup("Encoding vertex arguments")
+                    mesh.bindToVertexShader(encoder: renderEncoder)
+                    renderEncoder.setVertexBufferOffset(offset, index: BufferIndex.localUniforms.rawValue)
+                    renderEncoder.popDebugGroup()
+
+                    offset += stride
+
+                    renderEncoder.pushDebugGroup("Encoding fragment arguments")
+                    textures[i].bindToFragmentShader(encoder: renderEncoder, index: 0)
+                    sampler.bindToFragmentShader(encoder: renderEncoder, index: 0)
+                    renderEncoder.popDebugGroup()
+
+                    renderEncoder.pushDebugGroup("Drawing")
+                    mesh.drawMesh(encoder: renderEncoder)
+                    renderEncoder.popDebugGroup()
+
+                    renderEncoder.popDebugGroup()
+                }
+                renderEncoder.popDebugGroup()
+
+                renderEncoder.pushDebugGroup("Tackling the Skybox")
+                let skyboxConstantBuffer = skyboxTransforms[constantBufferIndex]
+                skybox.draw(encoder: renderEncoder, constants: skyboxConstantBuffer)
                 renderEncoder.popDebugGroup()
                 
                 renderEncoder.endEncoding()
@@ -237,6 +293,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     commandBuffer.present(drawable)
                 }
                 
+                renderEncoder.label = "Application Render Encoder"
             }
             
             commandBuffer.addCompletedHandler {_ in
@@ -245,6 +302,25 @@ class Renderer: NSObject, MTKViewDelegate {
             commandBuffer.commit()
             constantBufferIndex = (constantBufferIndex + 1) % buffersInFlight
             
+        }
+        
+    }
+    
+    func updateAllConstants(_ buffer: MTLBuffer) {
+        
+        // This is the pointer to the beginning of the buffer contents
+        var ptr = buffer.contents()
+        
+        // Populate the frame constants
+        ptr.copyMemory(from: &frameConstants, byteCount: MemoryLayout<PerFrameConstants>.stride)
+        ptr += MemoryLayout<PerFrameConstants>.stride
+        
+        // Then the per-object constants. We constantly offset the pointer to change the region
+        // of the buffer, after which we copy the data for each object
+        let stride = MemoryLayout<ObjectTransforms>.stride
+        for (i, _) in objectTransforms.enumerated() {
+            ptr.copyMemory(from: &objectTransforms[i], byteCount: stride)
+            ptr += stride
         }
         
     }
@@ -257,109 +333,10 @@ class Renderer: NSObject, MTKViewDelegate {
                                                                aspectRatio: aspect,
                                                                nearZ: 0.1,
                                                                farZ: 100.0)
-        for (i, _) in constantBuffers.enumerated() {
-            constantBuffers[i].projectionMatrix = camera.projectionMatrix
-        }
+        frameConstants.projectionMatrix = camera.projectionMatrix
         
     }
     
-    
-}
-
-func createSampler(device: MTLDevice) -> MTLSamplerState? {
-    
-    // Configure the sampler
-    let samplerDescriptor = MTLSamplerDescriptor()
-    samplerDescriptor.sAddressMode = .repeat
-    samplerDescriptor.tAddressMode = .repeat
-    samplerDescriptor.minFilter = .linear
-    samplerDescriptor.magFilter = .linear
-    samplerDescriptor.mipFilter = .linear
-    samplerDescriptor.label = "Atlas Texture Sampler"
-    
-    // We could've used a bilinear filter for minification, but it fails when the pixel
-    // covers more than 4 texels. This is because bilinear filters blend four texels
-    
-    return device.makeSamplerState(descriptor: samplerDescriptor)
-    
-}
-
-func createTexture(device: MTLDevice, assetName: String, assetExtension: String) throws -> MTLTexture? {
-    
-    // Here we use MTKTextureLoader to handle our texture loading
-    let textureLoader = MTKTextureLoader(device: device)
-    let tempPath = Bundle.main.path(forResource: assetName, ofType: assetExtension)
-    
-    let storageMode = NSNumber(value: MTLStorageMode.`private`.rawValue)
-    let textureUsage = NSNumber(value: MTLTextureUsage.shaderRead.rawValue)
-    let mipMapCreation = NSNumber(value: true)
-    let textureOptions = [MTKTextureLoader.Option.textureStorageMode : storageMode,
-                          MTKTextureLoader.Option.textureUsage : textureUsage,
-                          MTKTextureLoader.Option.generateMipmaps : mipMapCreation]
-    if let path = tempPath {
-        let url = URL(fileURLWithPath: path)
-        return try textureLoader.newTexture(URL: url, options: textureOptions)
-        
-    } else {
-        return nil
-    }
-    
-}
-
-func makeVertexDescriptor() -> MTLVertexDescriptor {
-    // Create the vertex descriptor first...
-    let vertexDescriptor = MTLVertexDescriptor()
-    
-    // Position
-    vertexDescriptor.attributes[0].format = .float3
-    vertexDescriptor.attributes[0].offset = 0 // Three floats causes 12 bytes of offset!
-    vertexDescriptor.attributes[0].bufferIndex = 0
-    
-    // Normal
-    vertexDescriptor.attributes[1].format = .float3
-    vertexDescriptor.attributes[1].offset = 12 // This value is cumulative!
-    vertexDescriptor.attributes[1].bufferIndex = 0
-    
-    // Texcoord
-    vertexDescriptor.attributes[2].format = .float2
-    vertexDescriptor.attributes[2].offset = 24
-    vertexDescriptor.attributes[2].bufferIndex = 0
-    
-    // Interleave them
-    vertexDescriptor.layouts[0].stride = 32
-    vertexDescriptor.layouts[0].stepRate = 1
-    vertexDescriptor.layouts[0].stepFunction = .perVertex
-    
-    return vertexDescriptor
-}
-
-func makeMesh(device: MTLDevice, vertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
-    
-    // The "glue" between Model I/O and Metal
-    let allocator = MTKMeshBufferAllocator(device: device)
-    
-    // Create the sphere mesh
-    let mdlMesh = MDLMesh(sphereWithExtent: float3(2.0, 2.0, 2.0),
-                          segments: uint2(50, 50),
-                          inwardNormals: false,
-                          geometryType: .triangles,
-                          allocator: allocator)
-    
-    
-    // Lay out the vertex/normal/texcoord information in the format we defined with the
-    // vertex descriptor
-    let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(vertexDescriptor)
-    
-    guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
-        throw RendererError.badVertexDescriptor
-    }
-    attributes[0].name = MDLVertexAttributePosition
-    attributes[1].name = MDLVertexAttributeNormal
-    attributes[2].name = MDLVertexAttributeTextureCoordinate
-    
-    mdlMesh.vertexDescriptor = mdlVertexDescriptor
-    
-    return try MTKMesh(mesh: mdlMesh, device: device)
     
 }
 

@@ -20,7 +20,7 @@ class Camera: NSObject, AnimatedObject {
     var movementInputDevice: InputDevices!
     
     // Keep this as a 3D vector as we're incrementing
-    var position = float3(0.0, 0.0, 0.0)
+    var position: float3
     
     // The azimuth angle of the camera w.r.t. the -z axis
     var azimuth: Float = 0.0
@@ -33,6 +33,8 @@ class Camera: NSObject, AnimatedObject {
     
     // The projection matrix is handled by the camera
     var projectionMatrix: matrix_float4x4
+    
+    var rotationMatrix = matrix_identity_float4x4
     
     
     // Keyboard controls
@@ -57,14 +59,15 @@ class Camera: NSObject, AnimatedObject {
     init(fovy: Float,
          aspectRatio: Float,
          nearZ: Float,
-         farZ: Float) {
+         farZ: Float,
+         position: float3) {
         
         
         projectionMatrix = Maths.createProjectionMatrix(fovy: fovy,
                                                         aspectRatio: aspectRatio,
                                                         nearZ: nearZ,
                                                         farZ: farZ)
-        
+        self.position = position
                 
         super.init()
  
@@ -84,7 +87,7 @@ class Camera: NSObject, AnimatedObject {
         // Then form the rotation matrices
         let azimuthRotation = Maths.createAxisRotation(radians: -azimuth, axis: upVector)
         let elevationRotation = Maths.createAxisRotation(radians: elevation, axis: rightVector)
-        let rotationMatrix = elevationRotation * azimuthRotation
+        rotationMatrix = elevationRotation * azimuthRotation
         
         // Here we listen to key inputs ... we advance the camera in the direction
         // of the forward vector
@@ -139,13 +142,13 @@ class Camera: NSObject, AnimatedObject {
             if let key = currentKeyPressed {
                 switch key {
                 case Alphanumerics.VK_ANSI_W.rawValue:
-                    velocity =  keyMoveSensitivity * forwardVector
+                    velocity =  simd_normalize(float3(forwardVector.x, 0.0, forwardVector.z))
                 case Alphanumerics.VK_ANSI_A.rawValue:
-                    velocity = -keyMoveSensitivity * rightVector
+                    velocity = -rightVector
                 case Alphanumerics.VK_ANSI_S.rawValue:
-                    velocity = -keyMoveSensitivity * forwardVector
+                    velocity = -simd_normalize(float3(forwardVector.x, 0.0, forwardVector.z))
                 case Alphanumerics.VK_ANSI_D.rawValue:
-                    velocity =  keyMoveSensitivity * rightVector
+                    velocity =  rightVector
                 case Alphanumerics.VK_ANSI_P.rawValue:
                     print("Position: " + position.debugDescription)
                 case Alphanumerics.VK_ANSI_Z.rawValue:
@@ -155,8 +158,9 @@ class Camera: NSObject, AnimatedObject {
                 default:
                     break
                 }
-
-
+                
+                velocity *= keyMoveSensitivity
+                
             }
 
         }
@@ -168,7 +172,7 @@ class Camera: NSObject, AnimatedObject {
     
     func calculateVelocityFromTouch(forwardVector: float3, rightVector: float3) -> float3 {
         
-        let forwardVelocity  = Float(movingFingerDisplacement.y) * forwardVector
+        let forwardVelocity  = Float(movingFingerDisplacement.y) * simd_normalize(float3(forwardVector.x, 0.0, forwardVector.z))
         let sidewaysVelocity = Float(movingFingerDisplacement.x) * rightVector
         
         return  touchScaleFactor * (-forwardVelocity + sidewaysVelocity)
