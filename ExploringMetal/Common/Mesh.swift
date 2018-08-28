@@ -279,7 +279,7 @@ struct MeshGeometry {
         vertexDescriptor.attributes[VertexAttributeVN.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         
         // Texcoord
-        vertexDescriptor.attributes[VertexAttributeVN.normal.rawValue].format = .float2
+        vertexDescriptor.attributes[VertexAttributeVN.normal.rawValue].format = .float3
         vertexDescriptor.attributes[VertexAttributeVN.normal.rawValue].offset = 12
         vertexDescriptor.attributes[VertexAttributeVN.normal.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         
